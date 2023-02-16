@@ -43,3 +43,4 @@ pids
 out/*
 
 upload*.sh
+.history
