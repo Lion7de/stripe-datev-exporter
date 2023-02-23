@@ -419,6 +419,12 @@ def to_recognized_month_csv2(revenue_items):
       for month in recognition.split_months(line_item["recognition_start"], line_item["recognition_end"], [line_item["amount_net"]]):
         accounting_date = max(revenue_item["created"], end if end < month["start"] else month["start"])
 
+        address = revenue_item["customer"].get("address", None)
+        country = ""
+        
+        if address is not None:
+          country = address.get("country", "")
+
         lines.append([
           revenue_item["id"],
           revenue_item.get("number", ""),
@@ -433,7 +439,7 @@ def to_recognized_month_csv2(revenue_items):
 
           revenue_item["customer"]["id"],
           customer.getCustomerName(revenue_item["customer"]),
-          revenue_item["customer"].get("address", {}).get("country", ""),
+          country,
 
           accounting_date.strftime("%Y-%m-%d"),
           revenue_type,

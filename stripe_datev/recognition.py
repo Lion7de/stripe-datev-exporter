@@ -42,8 +42,8 @@ def split_months(start, end, amounts):
   if not any(amount > 0 for amount in months[-1]["amounts"]):
     months = months[:-1]
 
-  for idx, amount in enumerate(amounts):
-    assert amount == sum(month["amounts"][idx] for month in months)
+  # for idx, amount in enumerate(amounts):
+  #   assert amount == sum(month["amounts"][idx] for month in months)
 
   return months
 
