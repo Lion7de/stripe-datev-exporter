@@ -300,7 +300,7 @@ def createAccountingRecords(revenue_item):
         "Soll/Haben-Kennzeichen": "S",
         "WKZ Umsatz": "EUR",
         "Konto": accounting_props["revenue_account"],
-        "Gegenkonto (ohne BU-Schlüssel)": "990",
+        "Gegenkonto (ohne BU-Schlüssel)": "3900",
         "Buchungstext": "pRAP nach {} / {}".format("{}..{}".format(forward_months[0]["start"].strftime("%Y-%m"), forward_months[-1]["start"].strftime("%Y-%m")) if len(forward_months) > 1 else forward_months[0]["start"].strftime("%Y-%m"), text),
         "EU-Land u. UStID": eu_vat_id,
       })
@@ -312,7 +312,7 @@ def createAccountingRecords(revenue_item):
           "Umsatz (ohne Soll/Haben-Kz)": output.formatDecimal(month["amounts"][0]),
           "Soll/Haben-Kennzeichen": "S",
           "WKZ Umsatz": "EUR",
-          "Konto": "990",
+          "Konto": "3900",
           "Gegenkonto (ohne BU-Schlüssel)": accounting_props["revenue_account"],
           "Buchungstext": "pRAP aus {} / {}".format(created.strftime("%Y-%m"), text),
           "EU-Land u. UStID": eu_vat_id,
@@ -357,7 +357,7 @@ def to_csv(inv):
     lines.append([
       invoice.id,
       invoice.number,
-      datetime.fromtimestamp(invoice.status_transitions.finalized_at, timezone.utc).astimezone(config.accounting_tz).strftime("%Y-%m-%d"),
+      datetime.fromtimestamp(invoice.status_transitions.finalized_at, timezone.utc).astimezone(config.accounting_tz).strftime("%d/%m/%Y"),
 
       format(total_before_tax, ".2f"),
       format(tax, ".2f") if tax else None,
@@ -428,9 +428,9 @@ def to_recognized_month_csv2(revenue_items):
         lines.append([
           revenue_item["id"],
           revenue_item.get("number", ""),
-          revenue_item["created"].strftime("%Y-%m-%d"),
-          line_item["recognition_start"].strftime("%Y-%m-%d"),
-          line_item["recognition_end"].strftime("%Y-%m-%d"),
+          revenue_item["created"].strftime("%d/%m/%Y"),
+          line_item["recognition_start"].strftime("%d/%m/%Y"),
+          line_item["recognition_end"].strftime("%d/%m/%Y"),
           month["start"].strftime("%Y-%m") + "-01",
 
           str(line_item.get("line_item_idx", 0) + 1),
@@ -441,7 +441,7 @@ def to_recognized_month_csv2(revenue_items):
           customer.getCustomerName(revenue_item["customer"]),
           country,
 
-          accounting_date.strftime("%Y-%m-%d"),
+          accounting_date.strftime("%d/%m/%Y"),
           revenue_type,
           "true" if is_recurring else "false",
         ])
@@ -449,19 +449,19 @@ def to_recognized_month_csv2(revenue_items):
         if voided_at is not None:
           reverse = lines[-1].copy()
           reverse[8] = format(month["amounts"][0] * -1, ".2f")
-          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%Y-%m-%d")
+          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%d/%m/%Y")
           lines.append(reverse)
 
         elif marked_uncollectible_at is not None:
           reverse = lines[-1].copy()
           reverse[8] = format(month["amounts"][0] * -1, ".2f")
-          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%Y-%m-%d")
+          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%d/%m/%Y")
           lines.append(reverse)
 
         elif credited_at is not None:
           reverse = lines[-1].copy()
           reverse[8] = format(month["amounts"][0] * -1 * (credited_amount / amount_with_tax), ".2f")
-          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%Y-%m-%d")
+          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%d/%m/%Y")
           lines.append(reverse)
 
 
@@ -502,7 +502,7 @@ def accrualRecords(invoiceDate, invoiceAmount, customerAccount, revenueAccount, 
     "Soll/Haben-Kennzeichen": "S",
     "WKZ Umsatz": "EUR",
     "Konto": str(revenueAccount),
-    "Gegenkonto (ohne BU-Schlüssel)": "990",
+    "Gegenkonto (ohne BU-Schlüssel)": "3900",
     "Buchungstext": accrueText,
   })
 
@@ -519,7 +519,7 @@ def accrualRecords(invoiceDate, invoiceAmount, customerAccount, revenueAccount, 
       "Umsatz (ohne Soll/Haben-Kz)": output.formatDecimal(periodAmount),
       "Soll/Haben-Kennzeichen": "S",
       "WKZ Umsatz": "EUR",
-      "Konto": "990",
+      "Konto": "3900",
       "Gegenkonto (ohne BU-Schlüssel)": str(revenueAccount),
       "Buchungstext": "{} / Aufloesung Rueckstellung Monat {}/{}".format(text, periodsBooked+1, revenueSpreadMonths),
     })
