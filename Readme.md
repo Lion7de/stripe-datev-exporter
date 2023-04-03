@@ -1,6 +1,5 @@
 # Stripe DATEV Exporter
 
-
 ## Environment
 
 Uses Python's virtualenv. To setup initially:
@@ -13,4 +12,10 @@ To activate in your current shell:
 
 ```
 . venv/bin/activate
+```
+
+## Run Command
+
+```
+python stripe-datev-cli.py download <year> <month>
 ```
