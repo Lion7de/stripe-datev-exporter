@@ -178,7 +178,7 @@ class StripeDatevCli(object):
             fp.write(r.content)
 
         for charge in charges:
-          fileName = "{} {}.html".format(datetime.fromtimestamp(charge.created, timezone.utc).strftime("%d/%m/%y"), charge.receipt_number or charge.id)
+          fileName = "{} {}.html".format(datetime.fromtimestamp(charge.created, timezone.utc).strftime("%d-%m-%y"), charge.receipt_number or charge.id)
           filePath = os.path.join(pdfDir, fileName)
           if os.path.exists(filePath):
             # print("{} exists, skipping".format(filePath))
