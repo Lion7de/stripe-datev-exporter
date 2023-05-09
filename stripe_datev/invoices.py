@@ -428,9 +428,9 @@ def to_recognized_month_csv2(revenue_items):
         lines.append([
           revenue_item["id"],
           revenue_item.get("number", ""),
-          revenue_item["created"].strftime("%d/%m/%Y"),
-          line_item["recognition_start"].strftime("%d/%m/%Y"),
-          line_item["recognition_end"].strftime("%d/%m/%Y"),
+          revenue_item["created"].strftime("%d/%m/%y"),
+          line_item["recognition_start"].strftime("%d/%m/%y"),
+          line_item["recognition_end"].strftime("%d/%m/%y"),
           month["start"].strftime("%Y-%m") + "-01",
 
           str(line_item.get("line_item_idx", 0) + 1),
@@ -441,7 +441,7 @@ def to_recognized_month_csv2(revenue_items):
           customer.getCustomerName(revenue_item["customer"]),
           country,
 
-          accounting_date.strftime("%d/%m/%Y"),
+          accounting_date.strftime("%d/%m/%y"),
           revenue_type,
           "true" if is_recurring else "false",
         ])
@@ -449,19 +449,19 @@ def to_recognized_month_csv2(revenue_items):
         if voided_at is not None:
           reverse = lines[-1].copy()
           reverse[8] = format(month["amounts"][0] * -1, ".2f")
-          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%d/%m/%Y")
+          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%d/%m/%y")
           lines.append(reverse)
 
         elif marked_uncollectible_at is not None:
           reverse = lines[-1].copy()
           reverse[8] = format(month["amounts"][0] * -1, ".2f")
-          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%d/%m/%Y")
+          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%d/%m/%y")
           lines.append(reverse)
 
         elif credited_at is not None:
           reverse = lines[-1].copy()
           reverse[8] = format(month["amounts"][0] * -1 * (credited_amount / amount_with_tax), ".2f")
-          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%d/%m/%Y")
+          reverse[12] = max(revenue_item["created"], end if end < month["end"] else month["start"]).strftime("%d/%m/%y")
           lines.append(reverse)
 
 

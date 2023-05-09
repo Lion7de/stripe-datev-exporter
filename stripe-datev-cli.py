@@ -163,7 +163,7 @@ class StripeDatevCli(object):
           finalized_date = datetime.fromtimestamp(invoice.status_transitions.finalized_at, timezone.utc).astimezone(stripe_datev.config.accounting_tz)
           invNo = invoice.number
 
-          fileName = "{} {}.pdf".format(finalized_date.strftime("%d/%m/%y"), invNo)
+          fileName = "{} {}.pdf".format(finalized_date.strftime("%d-%m-%y"), invNo)
           filePath = os.path.join(pdfDir, fileName)
           if os.path.exists(filePath):
             # print("{} exists, skipping".format(filePath))
