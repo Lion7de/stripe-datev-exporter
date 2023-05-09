@@ -357,7 +357,7 @@ def to_csv(inv):
     lines.append([
       invoice.id,
       invoice.number,
-      datetime.fromtimestamp(invoice.status_transitions.finalized_at, timezone.utc).astimezone(config.accounting_tz).strftime("%d/%m/%Y"),
+      datetime.fromtimestamp(invoice.status_transitions.finalized_at, timezone.utc).astimezone(config.accounting_tz).strftime("%d/%m/%y"),
 
       format(total_before_tax, ".2f"),
       format(tax, ".2f") if tax else None,

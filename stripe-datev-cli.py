@@ -64,7 +64,7 @@ class StripeDatevCli(object):
         else:
           fromTime = stripe_datev.config.accounting_tz.localize(datetime(year, 1, 1, 0, 0, 0, 0))
           toTime = fromTime + datedelta.YEAR
-        print("Retrieving data between {} and {}".format(fromTime.strftime("%Y-%m-%d"), (toTime - timedelta(0, 1)).strftime("%Y-%m-%d")))
+        print("Retrieving data between {} and {}".format(fromTime.strftime("%d/%m/%y"), (toTime - timedelta(0, 1)).strftime("%d/%m/%y")))
         thisMonth = fromTime.astimezone(stripe_datev.config.accounting_tz).strftime("%Y-%m")
 
         invoices = list(reversed(list(stripe_datev.invoices.listFinalizedInvoices(fromTime, toTime))))
@@ -163,7 +163,7 @@ class StripeDatevCli(object):
           finalized_date = datetime.fromtimestamp(invoice.status_transitions.finalized_at, timezone.utc).astimezone(stripe_datev.config.accounting_tz)
           invNo = invoice.number
 
-          fileName = "{} {}.pdf".format(finalized_date.strftime("%Y-%m-%d"), invNo)
+          fileName = "{} {}.pdf".format(finalized_date.strftime("%d/%m/%y"), invNo)
           filePath = os.path.join(pdfDir, fileName)
           if os.path.exists(filePath):
             # print("{} exists, skipping".format(filePath))
@@ -178,7 +178,7 @@ class StripeDatevCli(object):
             fp.write(r.content)
 
         for charge in charges:
-          fileName = "{} {}.html".format(datetime.fromtimestamp(charge.created, timezone.utc).strftime("%Y-%m-%d"), charge.receipt_number or charge.id)
+          fileName = "{} {}.html".format(datetime.fromtimestamp(charge.created, timezone.utc).strftime("%d/%m/%y"), charge.receipt_number or charge.id)
           filePath = os.path.join(pdfDir, fileName)
           if os.path.exists(filePath):
             # print("{} exists, skipping".format(filePath))
