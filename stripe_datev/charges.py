@@ -111,7 +111,17 @@ def createAccountingRecords(charges):
   records = []
 
   for charge in charges:
-    acc_props = customer.getAccountingProps(customer.retrieveCustomer(charge.customer))
+    if charge.invoice:
+      invoice = invoices.retrieveInvoice(charge.invoice)
+      number = invoice.number
+    else:
+      number = charge.receipt_number
+
+    if invoice is not None:
+      acc_props = customer.getAccountingProps(customer.retrieveCustomer(charge.customer), invoice)
+    else:
+      acc_props = customer.getAccountingProps(customer.retrieveCustomer(charge.customer))
+      
     created = datetime.fromtimestamp(charge.created, timezone.utc).astimezone(config.accounting_tz)
 
     balance_transaction = stripe.BalanceTransaction.retrieve(charge.balance_transaction)
@@ -120,12 +130,8 @@ def createAccountingRecords(charges):
     fee_amount = decimal.Decimal(balance_transaction.fee_details[0].amount) / 100
     fee_desc = balance_transaction.fee_details[0].description
 
-    if charge.invoice:
-      invoice = invoices.retrieveInvoice(charge.invoice)
-      number = invoice.number
-    else:
-      number = charge.receipt_number
 
+    print('CHARGES', number, acc_props["revenue_account"], acc_props["datev_tax_key"])
     records.append({
       "date": created,
       "Umsatz (ohne Soll/Haben-Kz)": output.formatDecimal(decimal.Decimal(charge.amount) / 100),
@@ -134,7 +140,7 @@ def createAccountingRecords(charges):
       "Konto": "1803",
       "Gegenkonto (ohne BU-Schlüssel)": acc_props["customer_account"],
       "Buchungstext": "Stripe Payment ({})".format(charge.id),
-      "BU-Schlüssel": acc_props["datev_tax_key"] or "40",
+      "BU-Schlüssel": acc_props["datev_tax_key"],
       "Belegfeld 1": number,
     })
 
