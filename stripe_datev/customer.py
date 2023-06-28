@@ -163,7 +163,7 @@ def getAccountingProps(customer, invoice=None, checkout_session=None):
   else:
     print("Warning: unknown tax status for customer", customer.id)
 
-  props["revenue_account"] = "8400"
+  props["revenue_account"] = "4449"
   return props
 
 def getRevenueAccount(customer, invoice=None, checkout_session=None):

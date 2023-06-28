@@ -186,7 +186,7 @@ def createRevenueItems(invs):
       "customer": cus,
       "amount_with_tax": amount_with_tax,
       "tax_percentage": tax_percentage,
-      "text": "Invoice {}".format(invoice.number),
+      "text": "Invoice {} / Land: {}".format(invoice.number, invoice["account_country"]),
       "voided_at": voided_at,
       "credited_at": credited_at,
       "credited_amount": credited_amount,
@@ -280,19 +280,21 @@ def createAccountingRecords(revenue_item):
 
   for line_item in line_items:
     amount_with_tax = line_item["amount_with_tax"]
+    amount_without_tax = line_item["amount_net"]
     recognition_start = line_item["recognition_start"]
     recognition_end = line_item["recognition_end"]
     text = line_item["text"]
 
-    months = recognition.split_months(recognition_start, recognition_end, [amount_with_tax])
+    months = recognition.split_months(recognition_start, recognition_end, [amount_without_tax])
 
     base_months = list(filter(lambda month: month["start"] <= created, months))
     base_amount = sum(map(lambda month: month["amounts"][0], base_months))
 
-    forward_amount = amount_with_tax - base_amount
+    forward_amount = amount_without_tax - base_amount
 
     forward_months = list(filter(lambda month: month["start"] > created, months))
 
+    
     if len(forward_months) > 0 and forward_amount > 0:
       records.append({
         "date": created,
@@ -301,6 +303,7 @@ def createAccountingRecords(revenue_item):
         "WKZ Umsatz": "EUR",
         "Konto": accounting_props["revenue_account"],
         "Gegenkonto (ohne BU-Schlüssel)": "3900",
+        "BU-Schlüssel": accounting_props["datev_tax_key"],
         "Buchungstext": "pRAP nach {} / {}".format("{}..{}".format(forward_months[0]["start"].strftime("%Y-%m"), forward_months[-1]["start"].strftime("%Y-%m")) if len(forward_months) > 1 else forward_months[0]["start"].strftime("%Y-%m"), text),
         "EU-Land u. UStID": eu_vat_id,
       })
@@ -314,6 +317,7 @@ def createAccountingRecords(revenue_item):
           "WKZ Umsatz": "EUR",
           "Konto": "3900",
           "Gegenkonto (ohne BU-Schlüssel)": accounting_props["revenue_account"],
+          "BU-Schlüssel": accounting_props["datev_tax_key"],
           "Buchungstext": "pRAP aus {} / {}".format(created.strftime("%Y-%m"), text),
           "EU-Land u. UStID": eu_vat_id,
         })
