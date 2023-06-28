@@ -186,7 +186,7 @@ def createRevenueItems(invs):
       "customer": cus,
       "amount_with_tax": amount_with_tax,
       "tax_percentage": tax_percentage,
-      "text": "Invoice {} / Land: {}".format(invoice.number, invoice["account_country"]),
+      "text": "Invoice {} / Land: {}-{}".format(invoice.number, accounting_props["country"] ,accounting_props["vat_region"]),
       "voided_at": voided_at,
       "credited_at": credited_at,
       "credited_amount": credited_amount,
