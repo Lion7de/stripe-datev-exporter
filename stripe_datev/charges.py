@@ -121,7 +121,7 @@ def createAccountingRecords(charges):
       acc_props = customer.getAccountingProps(customer.retrieveCustomer(charge.customer), invoice)
     else:
       acc_props = customer.getAccountingProps(customer.retrieveCustomer(charge.customer))
-      
+
     created = datetime.fromtimestamp(charge.created, timezone.utc).astimezone(config.accounting_tz)
 
     balance_transaction = stripe.BalanceTransaction.retrieve(charge.balance_transaction)
@@ -131,7 +131,6 @@ def createAccountingRecords(charges):
     fee_desc = balance_transaction.fee_details[0].description
 
 
-    print('CHARGES', number, acc_props["revenue_account"], acc_props["datev_tax_key"])
     records.append({
       "date": created,
       "Umsatz (ohne Soll/Haben-Kz)": output.formatDecimal(decimal.Decimal(charge.amount) / 100),
