@@ -11,11 +11,12 @@ invoices_cached = {}
 def listFinalizedInvoices(fromTime, toTime):
   invoices = stripe.Invoice.list(
     created={
+      "gt": int(fromTime.timestamp()),
       "lt": int(toTime.timestamp())
     },
-    due_date={
-      "gte": int(fromTime.timestamp()),
-    },
+    # due_date={
+    #   "gte": int(fromTime.timestamp()),
+    # },
     expand=["data.customer", "data.customer.tax_ids"]
   ).auto_paging_iter()
 
@@ -186,7 +187,7 @@ def createRevenueItems(invs):
       "customer": cus,
       "amount_with_tax": amount_with_tax,
       "tax_percentage": tax_percentage,
-      "text": "Invoice {} / Land: {}-{}".format(invoice.number, accounting_props["country"] ,accounting_props["vat_region"]),
+      "text": "Invoice {} / Land: {}-{}".format(invoice.number, invoice["account_country"], accounting_props["vat_region"]),
       "voided_at": voided_at,
       "credited_at": credited_at,
       "credited_amount": credited_amount,
@@ -281,6 +282,7 @@ def createAccountingRecords(revenue_item):
   for line_item in line_items:
     amount_with_tax = line_item["amount_with_tax"]
     amount_without_tax = line_item["amount_net"]
+    print('amount_without_tax', amount_without_tax)
     recognition_start = line_item["recognition_start"]
     recognition_end = line_item["recognition_end"]
     text = line_item["text"]
@@ -294,7 +296,8 @@ def createAccountingRecords(revenue_item):
 
     forward_months = list(filter(lambda month: month["start"] > created, months))
 
-    
+    print('base_amount', forward_amount, base_amount)
+
     if len(forward_months) > 0 and forward_amount > 0:
       records.append({
         "date": created,

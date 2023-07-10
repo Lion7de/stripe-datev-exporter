@@ -103,14 +103,16 @@ class StripeDatevCli(object):
         records = []
         for revenue_item in revenue_items:
           records += stripe_datev.invoices.createAccountingRecords(revenue_item)
+        print('RECORDS', records)
 
         records_by_month = {}
         for record in records:
           month = record["date"].strftime("%Y-%m")
           records_by_month[month] = records_by_month.get(month, []) + [record]
-
+        
         for month, records in records_by_month.items():
           if month == thisMonth:
+            print('thisMonth', thisMonth, records)
             name = "EXTF_{}_Revenue.csv".format(thisMonth)
           else:
             name = "EXTF_{}_Revenue_From_{}.csv".format(month, thisMonth)
